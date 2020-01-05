@@ -11,24 +11,36 @@ import SpriteKit
 import GameplayKit
 
 class GameViewController: UIViewController {
-
+    private let notificationCenter : NotificationCenter = .default
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
                 
-                // Present the scene
-                view.presentScene(scene)
+        notificationCenter.addObserver(self,
+                                       selector: #selector(moveToStart(_:)),
+                                       name    : .moveToStartScene,
+                                       object  : nil)
+        
+        notificationCenter.addObserver(self,
+                                       selector: #selector(moveToGameOver(_:)),
+                                       name    : .moveToGameOverScene,
+                                       object  : nil)
+        
+        notificationCenter.addObserver(self,
+                                       selector: #selector(moveToGame(_:)),
+                                       name    : .moveToGameScene,
+                                       object  : nil)
+                
+        if let view = self.view as! SKView? {
+            if let startScene = SKScene(fileNamed: "StartScene") {
+                startScene.scaleMode = .aspectFill //.resizeFill
+                view.presentScene(startScene)
             }
             
-            view.ignoresSiblingOrder = true
-            
-            view.showsFPS = true
-            view.showsNodeCount = true
+            //view.ignoresSiblingOrder = true
+            //view.showsFPS            = true
+            //view.showsNodeCount      = true
         }
     }
 
@@ -46,5 +58,45 @@ class GameViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    
+    @objc func moveToStart(_ notification: NSNotification) -> Void {
+        if let view = self.view as! SKView? {
+            if let startScene = SKScene(fileNamed: "StartScene") {
+                startScene.scaleMode = .aspectFill //.resizeFill
+                view.presentScene(startScene)
+            }
+            view.ignoresSiblingOrder = true
+        }
+    }
+    
+    @objc func moveToGameOver(_ notification: NSNotification) -> Void {
+        if let view = self.view as! SKView? {
+            if let gameOverScene = SKScene(fileNamed: "GameOverScene") {
+                gameOverScene.scaleMode = .aspectFill //.resizeFill
+                
+                // Get score from notification
+                if let map = notification.userInfo as NSDictionary? {
+                    if let score = map["score"] as? Int {
+                        gameOverScene.userData = NSMutableDictionary()
+                        gameOverScene.userData = ["score" : score]                        
+                    }
+                }
+                
+                view.presentScene(gameOverScene)
+            }
+            view.ignoresSiblingOrder = true
+        }
+    }
+    
+    @objc func moveToGame(_ notification: NSNotification) -> Void {
+        if let view = self.view as! SKView? {
+            if let gameScene = SKScene(fileNamed: "GameScene") {
+                gameScene.scaleMode = .aspectFill //.resizeFill
+                view.presentScene(gameScene)
+            }
+            view.ignoresSiblingOrder = true
+        }
     }
 }
