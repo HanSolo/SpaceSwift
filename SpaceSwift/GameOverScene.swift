@@ -7,12 +7,15 @@
 //
 
 import SpriteKit
+import GameplayKit
+import AVKit
 
 
 class GameOverScene: SKScene {
-    private let notificationCenter : NotificationCenter = .default
-    private var background         : SKSpriteNode?
-    private var scoreLabel         : SKLabelNode?
+    private let notificationCenter  : NotificationCenter = .default
+    private var background          : SKSpriteNode?
+    private var scoreLabel          : SKLabelNode?
+    private let gameOverSoundAction : SKAction           = SKAction.playSoundFileNamed("gameover.wav", waitForCompletion: false)
     
     
     override func didMove(to view: SKView) {
@@ -35,9 +38,10 @@ class GameOverScene: SKScene {
                     scoreLabel.text = String(score)
                 }
             }
-            
             scoreLabel.run(SKAction.fadeIn(withDuration: 1.0))
         }
+        
+        run(gameOverSoundAction)
         
         let sequence = SKAction.sequence([SKAction.wait(forDuration: 8), SKAction.run({ () -> Void in
             self.notificationCenter.post(name: .moveToStartScene, object: nil)

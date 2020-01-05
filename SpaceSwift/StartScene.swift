@@ -7,11 +7,16 @@
 //
 
 import SpriteKit
+import GameplayKit
+import AVKit
 
 
 class StartScene: SKScene {
     private let notificationCenter : NotificationCenter = .default
     private var background         : SKSpriteNode?
+    private var audioPlayer        : AVAudioPlayer?
+    private let soundTheme         : URL                = URL(fileURLWithPath: Bundle.main.path(forResource: "CityStomper.mp3", ofType:nil)!)
+    
     
     override func didMove(to view: SKView) {
         // Background image
@@ -20,7 +25,15 @@ class StartScene: SKScene {
             background.texture     = SKTexture(imageNamed: "startscreen.jpg")
             background.anchorPoint = CGPoint(x: 0.5, y: 0.5)
             background.position    = CGPoint(x: 0, y: 0)
-        }        
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundTheme)
+            audioPlayer?.numberOfLoops = -1
+            audioPlayer?.play()
+        } catch let error {
+            print("Can't play soundTheme. \(error.localizedDescription)")
+        }
     }
     
     func touchDown(atPoint pos : CGPoint) {
