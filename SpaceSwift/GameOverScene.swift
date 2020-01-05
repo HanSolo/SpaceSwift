@@ -43,7 +43,7 @@ class GameOverScene: SKScene {
         
         run(gameOverSoundAction)
         
-        let sequence = SKAction.sequence([SKAction.wait(forDuration: 8), SKAction.run({ () -> Void in
+        let sequence = SKAction.sequence([SKAction.wait(forDuration: 5), SKAction.run({ () -> Void in
             self.notificationCenter.post(name: .moveToStartScene, object: nil)
         })]);
         run(sequence)

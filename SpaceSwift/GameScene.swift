@@ -855,7 +855,7 @@ class GameScene: SKScene {
                     noOfShields += 1
                 }
                 crystal.toBeRemoved = true
-                let crystalExplosion :CrystalExplosion = CrystalExplosion.init(x: crystal.position.x, y: crystal.position.y, vX: crystal.vX, vY: crystal.vY, scale: 1.0)
+                let crystalExplosion :CrystalExplosion = CrystalExplosion.init(x: crystal.position.x, y: crystal.position.y, vX: crystal.vX, vY: crystal.vY, scale: 0.5)
                 crystalExplosion.zPosition = 2
                 crystalExplosions.append(crystalExplosion)
                 self.addChild(crystalExplosion)
@@ -1528,8 +1528,6 @@ class Explosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = Explosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == Explosion.MAX_FRAME_X {
@@ -1542,6 +1540,8 @@ class Explosion: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
 }
@@ -1575,8 +1575,6 @@ class Hit: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = Hit.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == Hit.MAX_FRAME_X {
@@ -1589,6 +1587,8 @@ class Hit: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
 }
@@ -1622,8 +1622,6 @@ class EnemyBossHit: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = EnemyBossHit.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == EnemyBossHit.MAX_FRAME_X {
@@ -1636,6 +1634,8 @@ class EnemyBossHit: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
 }
@@ -1668,8 +1668,6 @@ class AsteroidExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = AsteroidExplosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == AsteroidExplosion.MAX_FRAME_X {
@@ -1682,6 +1680,8 @@ class AsteroidExplosion: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
     
@@ -1716,8 +1716,6 @@ class RocketExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = RocketExplosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == RocketExplosion.MAX_FRAME_X {
@@ -1730,6 +1728,8 @@ class RocketExplosion: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
 }
@@ -1763,8 +1763,6 @@ class CrystalExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = CrystalExplosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == CrystalExplosion.MAX_FRAME_X {
@@ -1777,6 +1775,8 @@ class CrystalExplosion: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
 }
@@ -1811,8 +1811,6 @@ class SpaceShipExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y += vY
             texture = SpaceShipExplosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == SpaceShipExplosion.MAX_FRAME_X {
@@ -1826,6 +1824,8 @@ class SpaceShipExplosion: SKSpriteNode {
                     spaceShip?.respawn()
                 }
             }
+            position.x += vX
+            position.y += vY
         }
     }
 }
@@ -1858,8 +1858,6 @@ class EnemyBossExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            position.x += vX
-            position.y -= vY
             texture = EnemyBossExplosion.SHEET.textureForColumn(column: countX, row: countY)
             countX += 1
             if countX == EnemyBossExplosion.MAX_FRAME_X {
@@ -1872,6 +1870,8 @@ class EnemyBossExplosion: SKSpriteNode {
                     toBeRemoved = true
                 }
             }
+            position.x += vX
+            position.y -= vY
         }
     }
     
@@ -1902,15 +1902,15 @@ class SpriteSheet {
     }
 
     public func textureForColumn(column: Int, row: Int)->SKTexture? {
-        if !(0...self.rows ~= row && 0...self.columns ~= column) {
+        if !(0...rows ~= row && 0...columns ~= column) {
             //location is out of bounds
             return nil
         }
 
         var textureRect = CGRect(x: margin + CGFloat(column) * (frameSize.width + spacing) - spacing,
                                  y: margin + CGFloat(row) * (frameSize.height + spacing) - spacing,
-                                 width: self.frameSize.width,
-                                 height: self.frameSize.height)
+                                 width: frameSize.width,
+                                 height: frameSize.height)
 
         textureRect = CGRect(x: textureRect.origin.x / texture.size().width,
                              y: textureRect.origin.y / texture.size().height,
