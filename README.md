@@ -4,4 +4,4 @@ A simple tiny space game written in Swift. The original version was written in J
 Donations are welcome at [Paypal](https://paypal.me/hans0l0)
 
 ### Overview
-![Overview](https://raw.githubusercontent.com/HanSolo/SpaceSwift/master/SpaceSwift.png)
+![Overview](https://github.com/HanSolo/SpaceSwift/blob/master/SpaceSwift.png)
