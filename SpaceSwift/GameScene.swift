@@ -26,6 +26,7 @@ class GameScene: SKScene {
     public  static let MIN_Y                        : Double               = HEIGHT * 0.5
     public  static let MAX_Y                        : Double               = -HEIGHT
     public  static let ENEMY_FIRE_SENSITIVITY       : CGFloat              = 50
+    public  static let ENEMY_BOSS_FIRE_SENSITIVITY  : CGFloat              = 85
     public  static let ENEMY_TORPEDO_SPEED          : CGFloat              = 5
     public  static let ENEMY_BOSS_TORPEDO_SPEED     : CGFloat              = 6
     public  static let ENEMY_BOSS_ATTACK_INTERVAL   : Double               = 20
@@ -96,7 +97,7 @@ class GameScene: SKScene {
     private        var shieldIndicator              : SKShapeNode          = SKShapeNode()
     
     
-    // Initialization
+    // ******************** Initialization *******************************************
     override func didMove(to view: SKView) {
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: gameSoundTheme)
@@ -233,7 +234,7 @@ class GameScene: SKScene {
     }
     
     
-    // Touch handling
+    // ******************** Touch handling *******************************************
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for t in touches { self.touchDown(atPoint: t.location(in: self)) }
     }
@@ -317,9 +318,11 @@ class GameScene: SKScene {
         }
     }
     
-    
-    // Called before each frame is rendered
+        
+    // ******************** Update objects *******************************************
     override func update(_ currentTime: TimeInterval) {
+        // Called before each frame is rendered
+        
         // Remove nodes from scene
         removeChildren(in: torpedos.filter { $0.toBeRemoved })
         removeChildren(in: rockets.filter { $0.toBeRemoved })
@@ -501,7 +504,7 @@ class GameScene: SKScene {
     }
     
     
-    // Spawn different objects
+    // ******************** Spawn objects ********************************************
     private func spawnTorpedo(x: CGFloat, y: CGFloat) -> Void {
         let torpedo = Torpedo.init(x: x, y: y)
         torpedo.zPosition = 1
@@ -551,7 +554,7 @@ class GameScene: SKScene {
     }
     
     
-    // Hit test
+    // ******************** Hit tests ************************************************
     private func isHitCircleCircle(c1X: CGFloat, c1Y: CGFloat, c1R: CGFloat, c2X: CGFloat, c2Y: CGFloat, c2R: CGFloat) -> Bool {
         let distX    = c1X - c2X
         let distY    = c1Y - c2Y
@@ -560,7 +563,7 @@ class GameScene: SKScene {
     }
     
     private func hitCheck() -> Void {
-        // Check hits with asteroids
+        // ******************** Check hits with asteroid *****************************
         for i in 0 ..< GameScene.NO_OF_ASTEROIDS {
             let asteroid = asteroids[i]
             
@@ -637,10 +640,11 @@ class GameScene: SKScene {
             }
         }
         
-        // Check hits with enemies and let them fire
+        
+        // ******************** Check hits with enemies ******************************
         for i in 0 ..< GameScene.NO_OF_ENEMIES {
             let enemy = enemies[i]
-            // Fire on space ship
+            // Fire on space ship if within fire sensitivity
             if enemy.position.y > spaceShip.position.y {
                 if (enemy.position.x > spaceShip.position.x - GameScene.ENEMY_FIRE_SENSITIVITY &&
                     enemy.position.x < spaceShip.position.x + GameScene.ENEMY_FIRE_SENSITIVITY) {
@@ -708,13 +712,14 @@ class GameScene: SKScene {
             }
         }
         
-        // Check hits with EnemyBoss and let him fire
+        
+        // ******************** Check hits with enemy boss ***************************
         for i in 0 ..< enemyBosses.count {
             let enemyBoss = enemyBosses[i]
-            // Fire on space ship
+            // Fire on space ship if within enemy boss fire sensitivity
             if enemyBoss.position.y > spaceShip.position.y {
-                if (enemyBoss.position.x > spaceShip.position.x - GameScene.ENEMY_FIRE_SENSITIVITY &&
-                    enemyBoss.position.x < spaceShip.position.x + GameScene.ENEMY_FIRE_SENSITIVITY) {
+                if (enemyBoss.position.x > spaceShip.position.x - GameScene.ENEMY_BOSS_FIRE_SENSITIVITY &&
+                    enemyBoss.position.x < spaceShip.position.x + GameScene.ENEMY_BOSS_FIRE_SENSITIVITY) {
                     if (enemyBoss.lastShotY - enemyBoss.position.y > 15) {
                         spawnEnemyBossTorpedo(x: enemyBoss.position.x, y: enemyBoss.position.y, vX: enemyBoss.vX, vY: enemyBoss.vY)
                         enemyBoss.lastShotY = enemyBoss.position.y
@@ -789,7 +794,8 @@ class GameScene: SKScene {
             }
         }
         
-        // Check EnemyTorpedos with SpaceShip
+        
+        // ******************** Check hits with enemy torpedos ***********************
         for i in 0 ..< enemyTorpedos.count {
             let enemyTorpedo = enemyTorpedos[i]
             if !spaceShip.hasBeenHit {
@@ -817,7 +823,8 @@ class GameScene: SKScene {
             }
         }
         
-        // Check EnemyBossTorpedos with SpaceShip
+        
+        // ******************** Check hits with enemy boss torpedos ******************
         for i in 0 ..< enemyBossTorpedos.count {
             let enemyBossTorpedo = enemyBossTorpedos[i]
             if !spaceShip.hasBeenHit {
@@ -845,7 +852,8 @@ class GameScene: SKScene {
             }
         }
         
-        // Check for hits with crystal
+        
+        // ******************** Check hits with crystal ******************************
         for i in 0 ..< crystals.count {
             let crystal = crystals[i]
             let hit :Bool = isHitCircleCircle(c1X: crystal.position.x, c1Y: crystal.position.y, c1R: Crystal.RADIUS,
@@ -865,7 +873,7 @@ class GameScene: SKScene {
     }
         
     
-    // Game Over
+    // ******************** Game Over ************************************************
     private func gameOver() -> Void {
         let map :[String: Int] = ["score" : score]
         notificationCenter.post(name: .moveToGameOverScene, object: nil, userInfo: map)
@@ -873,7 +881,7 @@ class GameScene: SKScene {
 }
 
 
-// ******************** Space Object Classes ****************************************************
+// ******************** Space Object Classes *****************************************
 class Star: SKShapeNode {
     private static let TWO_PI      : CGFloat = CGFloat(Double.pi * 2.0)
     private static let MIN_SPEED_Y : CGFloat = 4
@@ -1500,20 +1508,20 @@ class Rocket: SKSpriteNode {
 }
 
 class Explosion: SKSpriteNode {
-    private static let MAX_FRAME_X  : Int         = 5
-    private static let MAX_FRAME_Y  : Int         = 4
-    private static let FRAME_SIZE   : Double      = 192
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: UIImage.init(named: "explosion.png")!)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: Explosion.MAX_FRAME_Y, columns: Explosion.MAX_FRAME_X)
-    private        var countX       : Int         = 0
-    private        var countY       : Int         = 0
-    private        var vX           : CGFloat     = 0
-    private        var vY           : CGFloat     = 0
-    public         var toBeRemoved  : Bool        = false
+    private static let MAX_FRAME_X  : Int       = 5
+    private static let MAX_FRAME_Y  : Int       = 4
+    private static let FRAME_SIZE   : Double    = 192
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "explosion.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: Explosion.MAX_FRAME_Y, cols: Explosion.MAX_FRAME_X)
+    private        var countX       : Int       = 0
+    private        var countY       : Int       = 0
+    private        var vX           : CGFloat   = 0
+    private        var vY           : CGFloat   = 0
+    public         var toBeRemoved  : Bool      = false
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double) {
-        super.init(texture: Explosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: Explosion.FRAME_SIZE, height: Explosion.FRAME_SIZE))
+        super.init(texture: Explosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: Explosion.FRAME_SIZE, height: Explosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1528,7 +1536,7 @@ class Explosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = Explosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = Explosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == Explosion.MAX_FRAME_X {
                 countX = 0
@@ -1547,21 +1555,20 @@ class Explosion: SKSpriteNode {
 }
 
 class Hit: SKSpriteNode {
-    private static let MAX_FRAME_X  : Int         = 5
-    private static let MAX_FRAME_Y  : Int         = 2
-    private static let FRAME_SIZE   : Double      = 80
-    private static let SPRITE_MAP   : UIImage     = UIImage.init(named: "torpedoHit2.png")!
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: SPRITE_MAP)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: Hit.MAX_FRAME_Y, columns: Hit.MAX_FRAME_X)
-    private        var countX       : Int         = 0
-    private        var countY       : Int         = 0
-    private        var vX           : CGFloat     = 0
-    private        var vY           : CGFloat     = 0
-    public         var toBeRemoved  : Bool        = false
+    private static let MAX_FRAME_X  : Int       = 5
+    private static let MAX_FRAME_Y  : Int       = 2
+    private static let FRAME_SIZE   : Double    = 80
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "torpedoHit2.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: Hit.MAX_FRAME_Y, cols: Hit.MAX_FRAME_X)
+    private        var countX       : Int       = 0
+    private        var countY       : Int       = 0
+    private        var vX           : CGFloat   = 0
+    private        var vY           : CGFloat   = 0
+    public         var toBeRemoved  : Bool      = false
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat) {
-        super.init(texture: Hit.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: Hit.FRAME_SIZE, height: Hit.FRAME_SIZE))
+        super.init(texture: Hit.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: Hit.FRAME_SIZE, height: Hit.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1575,7 +1582,7 @@ class Hit: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = Hit.SHEET.textureForColumn(column: countX, row: countY)
+            texture = Hit.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == Hit.MAX_FRAME_X {
                 countX = 0
@@ -1594,21 +1601,20 @@ class Hit: SKSpriteNode {
 }
 
 class EnemyBossHit: SKSpriteNode {
-    private static let MAX_FRAME_X  : Int         = 5
-    private static let MAX_FRAME_Y  : Int         = 2
-    private static let FRAME_SIZE   : Double      = 80
-    private static let SPRITE_MAP   : UIImage     = UIImage.init(named: "torpedoHit.png")!
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: SPRITE_MAP)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: EnemyBossHit.MAX_FRAME_Y, columns: EnemyBossHit.MAX_FRAME_X)
-    private        var countX       : Int         = 0
-    private        var countY       : Int         = 0
-    private        var vX           : CGFloat     = 0
-    private        var vY           : CGFloat     = 0
-    public         var toBeRemoved  : Bool        = false
+    private static let MAX_FRAME_X  : Int       = 5
+    private static let MAX_FRAME_Y  : Int       = 2
+    private static let FRAME_SIZE   : Double    = 80
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "torpedoHit.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: EnemyBossHit.MAX_FRAME_Y, cols: EnemyBossHit.MAX_FRAME_X)
+    private        var countX       : Int       = 0
+    private        var countY       : Int       = 0
+    private        var vX           : CGFloat   = 0
+    private        var vY           : CGFloat   = 0
+    public         var toBeRemoved  : Bool      = false
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat) {
-        super.init(texture: EnemyBossHit.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: EnemyBossHit.FRAME_SIZE, height: EnemyBossHit.FRAME_SIZE))
+        super.init(texture: EnemyBossHit.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: EnemyBossHit.FRAME_SIZE, height: EnemyBossHit.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1622,7 +1628,7 @@ class EnemyBossHit: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = EnemyBossHit.SHEET.textureForColumn(column: countX, row: countY)
+            texture = EnemyBossHit.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == EnemyBossHit.MAX_FRAME_X {
                 countX = 0
@@ -1641,20 +1647,20 @@ class EnemyBossHit: SKSpriteNode {
 }
 
 class AsteroidExplosion: SKSpriteNode {
-    private static let MAX_FRAME_X : Int         = 8
-    private static let MAX_FRAME_Y : Int         = 7
-    private static let FRAME_SIZE  : Double      = 256
-    private static let IMAGE       : SKTexture   = SKTexture.init(image: UIImage.init(named: "asteroidExplosion.png")!)
-    private static let SHEET       : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: AsteroidExplosion.MAX_FRAME_Y, columns: AsteroidExplosion.MAX_FRAME_X)
-    private        var countX      : Int         = 0
-    private        var countY      : Int         = 0
-    private        var vX          : CGFloat     = 0
-    private        var vY          : CGFloat     = 0
-    public         var toBeRemoved : Bool        = false
+    private static let MAX_FRAME_X : Int       = 8
+    private static let MAX_FRAME_Y : Int       = 7
+    private static let FRAME_SIZE  : Double    = 256
+    private static let IMAGE       : SKTexture = SKTexture.init(image: UIImage.init(named: "asteroidExplosion.png")!)
+    private static let SPRITE_MAP  : SpriteMap = SpriteMap.init(texture: IMAGE, rows: AsteroidExplosion.MAX_FRAME_Y, cols: AsteroidExplosion.MAX_FRAME_X)
+    private        var countX      : Int       = 0
+    private        var countY      : Int       = 0
+    private        var vX          : CGFloat   = 0
+    private        var vY          : CGFloat   = 0
+    public         var toBeRemoved : Bool      = false
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double) {
-        super.init(texture: AsteroidExplosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: AsteroidExplosion.FRAME_SIZE, height: AsteroidExplosion.FRAME_SIZE))
+        super.init(texture: AsteroidExplosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: AsteroidExplosion.FRAME_SIZE, height: AsteroidExplosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1668,7 +1674,7 @@ class AsteroidExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = AsteroidExplosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = AsteroidExplosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == AsteroidExplosion.MAX_FRAME_X {
                 countX = 0
@@ -1691,8 +1697,8 @@ class RocketExplosion: SKSpriteNode {
     private static let MAX_FRAME_X  : Int       = 4
     private static let MAX_FRAME_Y  : Int       = 7
     private static let FRAME_SIZE   : Double    = 256
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: UIImage.init(named: "rocketExplosion.png")!)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: RocketExplosion.MAX_FRAME_Y, columns: RocketExplosion.MAX_FRAME_X)
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "rocketExplosion.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: RocketExplosion.MAX_FRAME_Y, cols: RocketExplosion.MAX_FRAME_X)
     private        var countX       : Int       = 0
     private        var countY       : Int       = 0
     private        var vX           : CGFloat   = 0
@@ -1701,7 +1707,7 @@ class RocketExplosion: SKSpriteNode {
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double) {
-        super.init(texture: RocketExplosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: RocketExplosion.FRAME_SIZE, height: RocketExplosion.FRAME_SIZE))
+        super.init(texture: RocketExplosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: RocketExplosion.FRAME_SIZE, height: RocketExplosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1716,7 +1722,7 @@ class RocketExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = RocketExplosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = RocketExplosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == RocketExplosion.MAX_FRAME_X {
                 countX = 0
@@ -1738,8 +1744,8 @@ class CrystalExplosion: SKSpriteNode {
     private static let MAX_FRAME_X  : Int       = 4
     private static let MAX_FRAME_Y  : Int       = 7
     private static let FRAME_SIZE   : Double    = 256
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: UIImage.init(named: "crystalExplosion.png")!)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: CrystalExplosion.MAX_FRAME_Y, columns: CrystalExplosion.MAX_FRAME_X)
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "crystalExplosion.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: CrystalExplosion.MAX_FRAME_Y, cols: CrystalExplosion.MAX_FRAME_X)
     private        var countX       : Int       = 0
     private        var countY       : Int       = 0
     private        var vX           : CGFloat   = 0
@@ -1748,7 +1754,7 @@ class CrystalExplosion: SKSpriteNode {
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double) {
-        super.init(texture: CrystalExplosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: CrystalExplosion.FRAME_SIZE, height: CrystalExplosion.FRAME_SIZE))
+        super.init(texture: CrystalExplosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: CrystalExplosion.FRAME_SIZE, height: CrystalExplosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1763,7 +1769,7 @@ class CrystalExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = CrystalExplosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = CrystalExplosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == CrystalExplosion.MAX_FRAME_X {
                 countX = 0
@@ -1782,21 +1788,21 @@ class CrystalExplosion: SKSpriteNode {
 }
 
 class SpaceShipExplosion: SKSpriteNode {
-    private static let MAX_FRAME_X  : Int         = 8
-    private static let MAX_FRAME_Y  : Int         = 6
-    private static let FRAME_SIZE   : Double      = 100
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: UIImage.init(named: "spaceshipexplosion.png")!)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: SpaceShipExplosion.MAX_FRAME_Y, columns: SpaceShipExplosion.MAX_FRAME_X)
-    private        var countX       : Int         = 0
-    private        var countY       : Int         = 0
-    private        var vX           : CGFloat     = 0
-    private        var vY           : CGFloat     = 0
-    public         var toBeRemoved  : Bool        = false
+    private static let MAX_FRAME_X  : Int       = 8
+    private static let MAX_FRAME_Y  : Int       = 6
+    private static let FRAME_SIZE   : Double    = 100
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "spaceshipexplosion.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: SpaceShipExplosion.MAX_FRAME_Y, cols: SpaceShipExplosion.MAX_FRAME_X)
+    private        var countX       : Int       = 0
+    private        var countY       : Int       = 0
+    private        var vX           : CGFloat   = 0
+    private        var vY           : CGFloat   = 0
+    public         var toBeRemoved  : Bool      = false
     private        var spaceShip    : SpaceShip?
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double, spaceShip: SpaceShip) {
-        super.init(texture: SpaceShipExplosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: SpaceShipExplosion.FRAME_SIZE, height: SpaceShipExplosion.FRAME_SIZE))
+        super.init(texture: SpaceShipExplosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: SpaceShipExplosion.FRAME_SIZE, height: SpaceShipExplosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1811,7 +1817,7 @@ class SpaceShipExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = SpaceShipExplosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = SpaceShipExplosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == SpaceShipExplosion.MAX_FRAME_X {
                 countX = 0
@@ -1834,8 +1840,8 @@ class EnemyBossExplosion: SKSpriteNode {
     private static let MAX_FRAME_X  : Int       = 4
     private static let MAX_FRAME_Y  : Int       = 7
     private static let FRAME_SIZE   : Double    = 256
-    private static let IMAGE        : SKTexture   = SKTexture.init(image: UIImage.init(named: "enemyBossExplosion.png")!)
-    private static let SHEET        : SpriteSheet = SpriteSheet.init(texture: IMAGE, rows: EnemyBossExplosion.MAX_FRAME_Y, columns: EnemyBossExplosion.MAX_FRAME_X)
+    private static let IMAGE        : SKTexture = SKTexture.init(image: UIImage.init(named: "enemyBossExplosion.png")!)
+    private static let SPRITE_MAP   : SpriteMap = SpriteMap.init(texture: IMAGE, rows: EnemyBossExplosion.MAX_FRAME_Y, cols: EnemyBossExplosion.MAX_FRAME_X)
     private        var countX       : Int       = 0
     private        var countY       : Int       = 0
     private        var vX           : CGFloat   = 0
@@ -1844,7 +1850,7 @@ class EnemyBossExplosion: SKSpriteNode {
     
     
     init(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat, scale: Double) {
-        super.init(texture: EnemyBossExplosion.SHEET.textureForColumn(column: 0, row: 0), color: UIColor.clear, size: CGSize(width: EnemyBossExplosion.FRAME_SIZE, height: EnemyBossExplosion.FRAME_SIZE))
+        super.init(texture: EnemyBossExplosion.SPRITE_MAP.textureForColumn(col: 0, row: 0), color: UIColor.clear, size: CGSize(width: EnemyBossExplosion.FRAME_SIZE, height: EnemyBossExplosion.FRAME_SIZE))
         self.position.x               = x
         self.position.y               = y
         self.vX                       = vX
@@ -1858,7 +1864,7 @@ class EnemyBossExplosion: SKSpriteNode {
     
     func update() -> Void {
         if !toBeRemoved {
-            texture = EnemyBossExplosion.SHEET.textureForColumn(column: countX, row: countY)
+            texture = EnemyBossExplosion.SPRITE_MAP.textureForColumn(col: countX, row: countY)
             countX += 1
             if countX == EnemyBossExplosion.MAX_FRAME_X {
                 countX = 0
@@ -1878,44 +1884,35 @@ class EnemyBossExplosion: SKSpriteNode {
 }
 
 
-class SpriteSheet {
-    let texture   : SKTexture
-    let rows      : Int
-    let columns   : Int
-    var margin    : CGFloat = 0
-    var spacing   : CGFloat = 0
-    var frameSize : CGSize {
-        return CGSize(width: (texture.size().width - (margin * 2 + spacing * CGFloat(columns - 1))) / CGFloat(columns),
-                      height: (texture.size().height - (margin * 2 + spacing * CGFloat(rows - 1))) / CGFloat(rows))
+class SpriteMap {
+    let texture               : SKTexture
+    let rows                  : Int
+    let cols                  : Int
+    let frameSizePX           : CGSize
+    let frameWidthPercentage  : CGFloat
+    let frameHeightPercentage : CGFloat
+
+    
+    init(texture: SKTexture, rows: Int, cols: Int) {
+        self.texture               = texture
+        self.rows                  = rows
+        self.cols                  = cols
+        self.frameSizePX           = CGSize.init(width: texture.size().width / CGFloat(cols), height: texture.size().height / CGFloat(rows))
+        self.frameWidthPercentage  = frameSizePX.width / texture.size().width
+        self.frameHeightPercentage = frameSizePX.height / texture.size().height
     }
 
-    init(texture: SKTexture, rows: Int, columns: Int, spacing: CGFloat, margin: CGFloat) {
-        self.texture = texture
-        self.rows    = rows
-        self.columns = columns
-        self.spacing = spacing
-        self.margin  = margin
-    }
-
-    convenience init(texture: SKTexture, rows: Int, columns: Int) {
-        self.init(texture: texture, rows: rows, columns: columns, spacing: 0, margin: 0)
-    }
-
-    public func textureForColumn(column: Int, row: Int)->SKTexture? {
-        if !(0...rows ~= row && 0...columns ~= column) {
-            //location is out of bounds
+    
+    public func textureForColumn(col: Int, row: Int) -> SKTexture? {
+        if !(0...rows ~= row && 0...cols ~= col) {
             return nil
         }
 
-        var textureRect = CGRect(x: margin + CGFloat(column) * (frameSize.width + spacing) - spacing,
-                                 y: margin + CGFloat(row) * (frameSize.height + spacing) - spacing,
-                                 width: frameSize.width,
-                                 height: frameSize.height)
-
-        textureRect = CGRect(x: textureRect.origin.x / texture.size().width,
-                             y: textureRect.origin.y / texture.size().height,
-                             width: textureRect.size.width / texture.size().width,
-                             height: textureRect.size.height / texture.size().height)
+        let textureRect = CGRect(x: CGFloat(col) * frameWidthPercentage,
+                                 y: CGFloat(row) * frameHeightPercentage,
+                                 width: frameWidthPercentage,
+                                 height: frameHeightPercentage)
+        
         return SKTexture(rect: textureRect, in: texture)
     }
 }
