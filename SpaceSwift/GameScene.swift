@@ -156,45 +156,46 @@ class GameScene: SKScene {
         
         shield.zPosition = 2
         
+        // Controls
         spaceKey.anchorPoint = CGPoint(x: 0, y: 0.5)
         spaceKey.zPosition   = 5
-        spaceKey.position.x  = CGFloat(GameScene.MIN_X + 40)
+        spaceKey.position.x  = CGFloat(GameScene.MIN_X + 60)
         spaceKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.525)
         self.addChild(spaceKey)
         
         sKey.anchorPoint = CGPoint(x: 0, y: 0.5)
         sKey.zPosition   = 5
-        sKey.position.x  = CGFloat(GameScene.MIN_X + 40)
+        sKey.position.x  = CGFloat(GameScene.MIN_X + 60)
         sKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(sKey);
         
         rKey.anchorPoint = CGPoint(x: 0, y: 0.5)
         rKey.zPosition   = 5
-        rKey.position.x  = CGFloat(GameScene.MIN_X + 180)
+        rKey.position.x  = CGFloat(GameScene.MIN_X + 200)
         rKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(rKey);
         
         topKey.anchorPoint = CGPoint(x: 1, y: 0.5)
         topKey.zPosition   = 5
-        topKey.position.x  = CGFloat(GameScene.MAX_X - 136)
+        topKey.position.x  = CGFloat(GameScene.MAX_X - 156)
         topKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(topKey)
         
         bottomKey.anchorPoint = CGPoint(x: 1, y: 0.5)
         bottomKey.zPosition   = 5
-        bottomKey.position.x  = CGFloat(GameScene.MAX_X - 136)
+        bottomKey.position.x  = CGFloat(GameScene.MAX_X - 156)
         bottomKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.525)
         self.addChild(bottomKey)
         
         leftKey.anchorPoint = CGPoint(x: 1, y: 0.5)
         leftKey.zPosition   = 5
-        leftKey.position.x  = CGFloat(GameScene.MAX_X - 236)
+        leftKey.position.x  = CGFloat(GameScene.MAX_X - 256)
         leftKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.48)
         self.addChild(leftKey)
         
         rightKey.anchorPoint = CGPoint(x: 1, y: 0.5)
         rightKey.zPosition   = 5
-        rightKey.position.x  = CGFloat(GameScene.MAX_X - 40)
+        rightKey.position.x  = CGFloat(GameScene.MAX_X - 60)
         rightKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.48)
         self.addChild(rightKey)
         
