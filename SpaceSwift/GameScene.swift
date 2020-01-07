@@ -110,16 +110,16 @@ class GameScene: SKScene {
         // Background image
         self.background = self.childNode(withName: "//background") as? SKSpriteNode
         if let background = self.background {
-            background.texture     = SKTexture(imageNamed: "background.jpg")
-            //background.anchorPoint = CGPoint(x: 0.5, y: 0.187)
-            //background.position    = CGPoint(x: 0, y: 0)
+            background.texture   = SKTexture(imageNamed: "background.jpg")
+            background.blendMode = .replace
+            background.zPosition = 1
         }
         
         // Stars
         for i in 0 ..< GameScene.NO_OF_STARS {
             let star = Star()
             star.position.y = CGFloat(GameScene.MAX_Y + Double.random(in: 0...1) * GameScene.HEIGHT)
-            star.zPosition  = 1
+            star.zPosition  = 2
             stars.insert(star, at: i)
             self.addChild(star)
         }
@@ -127,7 +127,7 @@ class GameScene: SKScene {
         // Asteroids
         for i in 0 ..< GameScene.NO_OF_ASTEROIDS {
             let asteroid       = Asteroid()
-            asteroid.zPosition = 1
+            asteroid.zPosition = 2
             asteroids.insert(asteroid, at: i)
             self.addChild(asteroid)
         }
@@ -135,7 +135,7 @@ class GameScene: SKScene {
         // Enemies
         for i in 0 ..< GameScene.NO_OF_ENEMIES {
             let enemy       = Enemy()
-            enemy.zPosition = 1
+            enemy.zPosition = 2
             enemies.insert(enemy, at: i)
             self.addChild(enemy)
         }
@@ -146,55 +146,55 @@ class GameScene: SKScene {
         self.scoreLabel = self.childNode(withName: "//scoreLabel") as? SKLabelNode
         if let label = self.scoreLabel {
             label.alpha     = 0.0
-            label.zPosition = 5
+            label.zPosition = 2
             label.run(SKAction.fadeIn(withDuration: 2.0))
             label.text = String(score)
         }
         
-        spaceShip.zPosition = 1
+        spaceShip.zPosition = 2
         self.addChild(spaceShip)
         
-        shield.zPosition = 2
+        shield.zPosition = 3
         
         // Controls
         spaceKey.anchorPoint = CGPoint(x: 0, y: 0.5)
-        spaceKey.zPosition   = 5
+        spaceKey.zPosition   = 3
         spaceKey.position.x  = CGFloat(GameScene.MIN_X + 60)
         spaceKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.525)
         self.addChild(spaceKey)
         
         sKey.anchorPoint = CGPoint(x: 0, y: 0.5)
-        sKey.zPosition   = 5
+        sKey.zPosition   = 3
         sKey.position.x  = CGFloat(GameScene.MIN_X + 60)
         sKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(sKey);
         
         rKey.anchorPoint = CGPoint(x: 0, y: 0.5)
-        rKey.zPosition   = 5
+        rKey.zPosition   = 3
         rKey.position.x  = CGFloat(GameScene.MIN_X + 200)
         rKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(rKey);
         
         topKey.anchorPoint = CGPoint(x: 1, y: 0.5)
-        topKey.zPosition   = 5
+        topKey.zPosition   = 3
         topKey.position.x  = CGFloat(GameScene.MAX_X - 156)
         topKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.435)
         self.addChild(topKey)
         
         bottomKey.anchorPoint = CGPoint(x: 1, y: 0.5)
-        bottomKey.zPosition   = 5
+        bottomKey.zPosition   = 3
         bottomKey.position.x  = CGFloat(GameScene.MAX_X - 156)
         bottomKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.525)
         self.addChild(bottomKey)
         
         leftKey.anchorPoint = CGPoint(x: 1, y: 0.5)
-        leftKey.zPosition   = 5
+        leftKey.zPosition   = 3
         leftKey.position.x  = CGFloat(GameScene.MAX_X - 256)
         leftKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.48)
         self.addChild(leftKey)
         
         rightKey.anchorPoint = CGPoint(x: 1, y: 0.5)
-        rightKey.zPosition   = 5
+        rightKey.zPosition   = 3
         rightKey.position.x  = CGFloat(GameScene.MAX_X - 60)
         rightKey.position.y  = CGFloat(-GameScene.HEIGHT * 0.48)
         self.addChild(rightKey)
@@ -204,7 +204,7 @@ class GameScene: SKScene {
             life.anchorPoint = CGPoint.init(x: 0, y: 0.5)
             life.position.x = CGFloat(Double(i) * 16.0 + 40.0 + GameScene.MIN_X)
             life.position.y = CGFloat(GameScene.MIN_Y + 40.0)
-            life.zPosition  = 1
+            life.zPosition  = 3
             lifes.append(life)
         }
         
@@ -213,7 +213,7 @@ class GameScene: SKScene {
             shield.anchorPoint = CGPoint.init(x: 1, y: 0.5)
             shield.position.x = CGFloat(GameScene.MAX_X - Double(i) * 18.0 - 40.0)
             shield.position.y = CGFloat(GameScene.MIN_Y + 40.0)
-            shield.zPosition  = 1
+            shield.zPosition  = 3
             shields.append(shield)
         }
         
@@ -222,7 +222,7 @@ class GameScene: SKScene {
         shieldIndicatorFrame.fillColor   = UIColor.clear
         shieldIndicatorFrame.strokeColor = UIColor.clear
         shieldIndicatorFrame.lineWidth   = 1
-        shieldIndicatorFrame.zPosition   = 1
+        shieldIndicatorFrame.zPosition   = 3
         self.addChild(shieldIndicatorFrame)
         
         shieldIndicator.path        = UIBezierPath(rect: CGRect.init(x: 0, y: 0, width: 174, height: 18)).cgPath
@@ -230,7 +230,7 @@ class GameScene: SKScene {
         shieldIndicator.fillColor   = UIColor.clear
         shieldIndicator.strokeColor = UIColor.clear
         shieldIndicator.lineWidth   = 1
-        shieldIndicator.zPosition   = 1
+        shieldIndicator.zPosition   = 3
         self.addChild(shieldIndicator)
     }
     
@@ -324,39 +324,13 @@ class GameScene: SKScene {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
         
-        // Remove nodes from scene
-        removeChildren(in: torpedos.filter { $0.toBeRemoved })
-        removeChildren(in: rockets.filter { $0.toBeRemoved })
-        removeChildren(in: enemyTorpedos.filter { $0.toBeRemoved })
-        removeChildren(in: enemyBossTorpedos.filter { $0.toBeRemoved })
-        removeChildren(in: hits.filter { $0.toBeRemoved })
-        removeChildren(in: enemyBossHits.filter { $0.toBeRemoved })
-        removeChildren(in: explosions.filter { $0.toBeRemoved })
-        removeChildren(in: asteroidExplosions.filter { $0.toBeRemoved })
-        removeChildren(in: rocketExplosions.filter { $0.toBeRemoved })
-        removeChildren(in: enemyBossExplosions.filter { $0.toBeRemoved })
-        removeChildren(in: spaceShipExplosions.filter { $0.toBeRemoved })
-        removeChildren(in: crystalExplosions.filter { $0.toBeRemoved })
-        removeChildren(in: enemyBosses.filter { $0.toBeRemoved })
-        removeChildren(in: crystals.filter { $0.toBeRemoved })
-        removeChildren(in: lifes)
-        removeChildren(in: shields)
-        
-        // Remove obsolete objects
-        torpedos            = torpedos.filter { !$0.toBeRemoved }
-        rockets             = rockets.filter { !$0.toBeRemoved }
-        enemyTorpedos       = enemyTorpedos.filter { !$0.toBeRemoved }
-        enemyBossTorpedos   = enemyBossTorpedos.filter { !$0.toBeRemoved }
-        hits                = hits.filter { !$0.toBeRemoved }
-        enemyBossHits       = enemyBossHits.filter { !$0.toBeRemoved }
-        asteroidExplosions  = asteroidExplosions.filter { !$0.toBeRemoved }
-        explosions          = explosions.filter { !$0.toBeRemoved }
-        rocketExplosions    = rocketExplosions.filter { !$0.toBeRemoved }
-        spaceShipExplosions = spaceShipExplosions.filter { !$0.toBeRemoved }
-        enemyBossExplosions = enemyBossExplosions.filter { !$0.toBeRemoved }
-        crystalExplosions   = crystalExplosions.filter { !$0.toBeRemoved }
-        enemyBosses         = enemyBosses.filter { !$0.toBeRemoved }
-        crystals            = crystals.filter { !$0.toBeRemoved }
+        // Update background
+        if let background = self.background {
+            background.position.y -= 0.5
+            if (background.position.y < -2228) {
+                background.position.y = 0
+            }
+        }
         
         // EnemyBoss
         if currentTime - lastEnemyBossAttack > GameScene.ENEMY_BOSS_ATTACK_INTERVAL {
@@ -368,24 +342,6 @@ class GameScene: SKScene {
         if currentTime - lastCrystal > GameScene.CRYSTAL_SPAWN_INTERVAL {
             spawnCrystal()
             lastCrystal = currentTime
-        }
-        
-        // No of lifes
-        for i in 0 ..< noOfLifes {
-            self.addChild(lifes[i])
-        }
-        
-        // No of shields
-        for i in 0 ..< noOfShields {
-            self.addChild(shields[i])
-        }
-        
-        // Update background
-        if let background = self.background {
-            background.position.y -= 0.5
-            if (background.position.y < -2228) {
-                background.position.y = 0
-            }
         }
         
         // Shield
@@ -497,61 +453,172 @@ class GameScene: SKScene {
             enemyBossHits[i].update()
         }
         
-        // Update score
-        scoreLabel?.text = String(score)
-        
         // Perform hit check
         hitCheck()
+        
+        
+        // Remove nodes from scene
+        removeChildren(in: torpedos)
+        removeChildren(in: rockets)
+        removeChildren(in: enemyTorpedos)
+        removeChildren(in: enemyBossTorpedos)
+        removeChildren(in: hits)
+        removeChildren(in: enemyBossHits)
+        removeChildren(in: explosions)
+        removeChildren(in: asteroidExplosions)
+        removeChildren(in: rocketExplosions)
+        removeChildren(in: enemyBossExplosions)
+        removeChildren(in: spaceShipExplosions)
+        removeChildren(in: crystalExplosions)
+        removeChildren(in: enemyBosses)
+        removeChildren(in: crystals)
+        removeChildren(in: lifes)
+        removeChildren(in: shields)
+        
+        
+        // Remove obsolete objects
+        torpedos            = torpedos.filter { !$0.toBeRemoved }
+        rockets             = rockets.filter { !$0.toBeRemoved }
+        enemyTorpedos       = enemyTorpedos.filter { !$0.toBeRemoved }
+        enemyBossTorpedos   = enemyBossTorpedos.filter { !$0.toBeRemoved }
+        hits                = hits.filter { !$0.toBeRemoved }
+        enemyBossHits       = enemyBossHits.filter { !$0.toBeRemoved }
+        asteroidExplosions  = asteroidExplosions.filter { !$0.toBeRemoved }
+        explosions          = explosions.filter { !$0.toBeRemoved }
+        rocketExplosions    = rocketExplosions.filter { !$0.toBeRemoved }
+        spaceShipExplosions = spaceShipExplosions.filter { !$0.toBeRemoved }
+        enemyBossExplosions = enemyBossExplosions.filter { !$0.toBeRemoved }
+        crystalExplosions   = crystalExplosions.filter { !$0.toBeRemoved }
+        enemyBosses         = enemyBosses.filter { !$0.toBeRemoved }
+        crystals            = crystals.filter { !$0.toBeRemoved }
+        
+        
+        // Add enemy boss
+        for i in 0 ..< enemyBosses.count {
+            self.addChild(enemyBosses[i])
+        }
+        
+        // Add crystals
+        for i in 0 ..< crystals.count {
+            self.addChild(crystals[i])
+        }
+        
+        // Add torpedos
+        for i in 0 ..< torpedos.count {
+            self.addChild(torpedos[i])
+        }
+        
+        // Add rockets
+        for i in 0 ..< rockets.count {
+            self.addChild(rockets[i])
+        }
+        
+        // Add enemy torpedos
+        for i in 0 ..< enemyTorpedos.count {
+            self.addChild(enemyTorpedos[i])
+        }
+        
+        // Add enemy boss torpedos
+        for i in 0 ..< enemyBossTorpedos.count {
+            self.addChild(enemyBossTorpedos[i])
+        }
+        
+        // Add hits
+        for i in 0 ..< hits.count {
+            self.addChild(hits[i])
+        }
+        
+        // Add enemy boss hits
+        for i in 0 ..< enemyBossHits.count {
+            self.addChild(enemyBossHits[i])
+        }
+        
+        // Add asteroid explosions
+        for i in 0 ..< asteroidExplosions.count {
+            self.addChild(asteroidExplosions[i])
+        }
+        
+        // Add rocket explosions
+        for i in 0 ..< rocketExplosions.count {
+            self.addChild(rocketExplosions[i])
+        }
+        
+        // Add spaceship explosions
+        for i in 0 ..< spaceShipExplosions.count {
+            self.addChild(spaceShipExplosions[i])
+        }
+        
+        // Add explosions
+        for i in 0 ..< explosions.count {
+            self.addChild(explosions[i])
+        }
+                
+        // Add enemy boss explosions
+        for i in 0 ..< enemyBossExplosions.count {
+            self.addChild(enemyBossExplosions[i])
+        }
+        
+        // Add crystal explosions
+        for i in 0 ..< crystalExplosions.count {
+            self.addChild(crystalExplosions[i])
+        }
+        
+        // No of lifes
+        for i in 0 ..< noOfLifes {
+            self.addChild(lifes[i])
+        }
+        
+        // No of shields
+        for i in 0 ..< noOfShields {
+            self.addChild(shields[i])
+        }
+        
+        // Update score
+        scoreLabel?.text = String(score)
     }
     
     
     // ******************** Spawn objects ********************************************
     private func spawnTorpedo(x: CGFloat, y: CGFloat) -> Void {
         let torpedo = Torpedo.init(x: x, y: y)
-        torpedo.zPosition = 1
+        torpedo.zPosition = 2
         torpedos.append(torpedo)
         torpedo.run(laserSoundAction)
-        self.addChild(torpedo)
     }
     
     private func spawnRocket(x: CGFloat, y: CGFloat) -> Void {
         let rocket = Rocket.init(x: x, y: y)
-        rocket.zPosition = 1
+        rocket.zPosition = 2
         rockets.append(rocket)
         rocket.run(rocketLaunchSoundAction)
-        self.addChild(rocket)
     }
     
     private func spawnEnemyTorpedo(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat) {
         let vFactor      : CGFloat      = GameScene.ENEMY_TORPEDO_SPEED / vY
         let enemyTorpedo : EnemyTorpedo = EnemyTorpedo.init(x: x, y: y, vX: vFactor * vX, vY: vFactor * vY)
-        enemyTorpedo.zPosition = 1
+        enemyTorpedo.zPosition = 2
         enemyTorpedos.append(enemyTorpedo)
         enemyTorpedo.run(enemyLaserSoundAction)
-        self.addChild(enemyTorpedo)
     }
     
     private func spawnEnemyBossTorpedo(x: CGFloat, y: CGFloat, vX: CGFloat, vY: CGFloat) {
         let vFactor          : CGFloat          = GameScene.ENEMY_BOSS_TORPEDO_SPEED / vY
         let enemyBossTorpedo : EnemyBossTorpedo = EnemyBossTorpedo.init(x: x, y: y, vX: vFactor * vX, vY: vFactor * vY)
-        enemyBossTorpedo.zPosition = 1
+        enemyBossTorpedo.zPosition = 2
         enemyBossTorpedos.append(enemyBossTorpedo)
         enemyBossTorpedo.run(enemyLaserSoundAction)
-        self.addChild(enemyBossTorpedo)
     }
     
     private func spawnEnemyBoss() {
         let enemyBoss = EnemyBoss()
-        enemyBoss.zPosition = 1
+        enemyBoss.zPosition = 2
         enemyBosses.append(enemyBoss)
-        self.addChild(enemyBoss)
     }
     
     private func spawnCrystal() {
         let crystal = Crystal()
-        crystal.zPosition = 1
+        crystal.zPosition = 2
         crystals.append(crystal)
-        self.addChild(crystal)
     }
     
     
@@ -578,7 +645,6 @@ class GameScene: SKScene {
                         let asteroidExplosion = AsteroidExplosion.init(x: asteroid.position.x, y: asteroid.position.y, vX: asteroid.vX, vY: asteroid.vY, scale: asteroid.aScale!)
                         asteroidExplosion.zPosition = 2
                         asteroidExplosions.append(asteroidExplosion)
-                        self.addChild(asteroidExplosion)
                         score += asteroid.value!
                         asteroid.respawn()
                         torpedo.toBeRemoved = true
@@ -586,9 +652,8 @@ class GameScene: SKScene {
                         asteroidExplosion.run(asteroidExplosionSoundAction)
                     } else {
                         let hit = Hit.init(x: torpedo.position.x, y: torpedo.position.y + 40, vX: asteroid.vX, vY: asteroid.vY)
-                        hit.zPosition = 1
+                        hit.zPosition = 2
                         hits.append(hit)
-                        self.addChild(hit)
                         torpedo.toBeRemoved = true
                         torpedo.run(SKAction.removeFromParent())
                         torpedo.run(torpedoHitSoundAction)
@@ -604,7 +669,6 @@ class GameScene: SKScene {
                     let rocketExplosion = RocketExplosion.init(x: asteroid.position.x, y: asteroid.position.y, vX: asteroid.vX, vY: asteroid.vY, scale: asteroid.aScale!)
                     rocketExplosion.zPosition = 2
                     rocketExplosions.append(rocketExplosion)
-                    self.addChild(rocketExplosion)
                     score += asteroid.value!
                     asteroid.respawn()
                     rocket.toBeRemoved = true
@@ -622,13 +686,11 @@ class GameScene: SKScene {
                         let asteroidExplosion = AsteroidExplosion.init(x: asteroid.position.x, y: asteroid.position.y, vX: asteroid.vX, vY: asteroid.vY, scale: asteroid.aScale!)
                         asteroidExplosion.zPosition = 2
                         asteroidExplosions.append(asteroidExplosion)
-                        self.addChild(asteroidExplosion)
                         asteroidExplosion.run(explosionSoundAction)
                     } else {
                         let spaceShipExplosion = SpaceShipExplosion.init(x: spaceShip.position.x, y: spaceShip.position.y, vX: spaceShip.vX, vY: spaceShip.vY, scale: 1.0, spaceShip: spaceShip)
                         spaceShipExplosion.zPosition = 2
                         spaceShipExplosions.append(spaceShipExplosion)
-                        self.addChild(spaceShipExplosion)
                         spaceShip.run(spaceShipExplosionSoundAction)
                         spaceShip.hasBeenHit = true
                         noOfLifes -= 1
@@ -663,7 +725,6 @@ class GameScene: SKScene {
                     let explosion = Explosion.init(x: enemy.position.x, y: enemy.position.y, vX: enemy.vX, vY: enemy.vY, scale: 0.5)
                     explosion.zPosition = 2
                     explosions.append(explosion)
-                    self.addChild(explosion)
                     score += enemy.value!
                     enemy.respawn()
                     torpedo.toBeRemoved = true
@@ -682,7 +743,6 @@ class GameScene: SKScene {
                     enemy.respawn()
                     rocket.toBeRemoved = true
                     rocketExplosion.run(rocketExplosionSoundAction)
-                    self.addChild(rocketExplosion)
                 }
             }
             // Check hits with space ship
@@ -695,12 +755,10 @@ class GameScene: SKScene {
                         explosion.zPosition = 2
                         explosions.append(explosion)
                         explosion.run(explosionSoundAction)
-                        self.addChild(explosion)
                     } else {
                         let spaceShipExplosion = SpaceShipExplosion.init(x: spaceShip.position.x, y: spaceShip.position.y, vX: spaceShip.vX, vY: spaceShip.vY, scale: 1.0, spaceShip: spaceShip)
                         spaceShipExplosion.zPosition = 2
                         spaceShipExplosions.append(spaceShipExplosion)
-                        self.addChild(spaceShipExplosion)
                         spaceShip.run(spaceShipExplosionSoundAction)
                         spaceShip.hasBeenHit = true
                         noOfLifes -= 1
@@ -740,14 +798,12 @@ class GameScene: SKScene {
                         let enemyBossExplosion = EnemyBossExplosion.init(x: enemyBoss.position.x, y: enemyBoss.position.y, vX: enemyBoss.vX, vY: enemyBoss.vY, scale: 0.5)
                         enemyBossExplosion.zPosition = 2
                         enemyBossExplosions.append(enemyBossExplosion)
-                        self.addChild(enemyBossExplosion)
                         enemyBossExplosion.run(enemyBossExplosionSoundAction)
                     } else {
                         let enemyBossHit = EnemyBossHit.init(x: enemyBoss.position.x, y: enemyBoss.position.y, vX: enemyBoss.vX, vY: enemyBoss.vY)
-                        enemyBossHit.zPosition = 1
+                        enemyBossHit.zPosition = 2
                         enemyBossHits.append(enemyBossHit)
                         torpedo.toBeRemoved = true
-                        self.addChild(enemyBossHit)
                         enemyBossHit.run(enemyBossShildHitSoundAction)
                     }
                 }
@@ -763,7 +819,6 @@ class GameScene: SKScene {
                     score += enemyBoss.value
                     enemyBoss.toBeRemoved = true
                     rocket.toBeRemoved    = true
-                    self.addChild(rocketExplosion)
                     rocketExplosion.run(rocketExplosionSoundAction)
                 }
             }
@@ -777,13 +832,11 @@ class GameScene: SKScene {
                         let enemyBossExplosion = EnemyBossExplosion.init(x: enemyBoss.position.x, y: enemyBoss.position.y, vX: enemyBoss.vX, vY: enemyBoss.vY, scale: 0.5)
                         enemyBossExplosion.zPosition = 2
                         enemyBossExplosions.append(enemyBossExplosion)
-                        self.addChild(enemyBossExplosion)
                         enemyBossExplosion.run(enemyBossExplosionSoundAction)
                     } else {
                         let spaceShipExplosion = SpaceShipExplosion.init(x: spaceShip.position.x, y: spaceShip.position.y, vX: spaceShip.vX, vY: spaceShip.vY, scale: 1.0, spaceShip: spaceShip)
                         spaceShipExplosion.zPosition = 2
                         spaceShipExplosions.append(spaceShipExplosion)
-                        self.addChild(spaceShipExplosion)
                         spaceShip.run(spaceShipExplosionSoundAction)
                         spaceShip.hasBeenHit = true
                         noOfLifes -= 1
@@ -810,7 +863,6 @@ class GameScene: SKScene {
                         let spaceShipExplosion = SpaceShipExplosion.init(x: spaceShip.position.x, y: spaceShip.position.y, vX: spaceShip.vX, vY: spaceShip.vY, scale: 1.0, spaceShip: spaceShip)
                         spaceShipExplosion.zPosition = 2
                         spaceShipExplosions.append(spaceShipExplosion)
-                        self.addChild(spaceShipExplosion)
                         spaceShip.run(spaceShipExplosionSoundAction)
                         spaceShip.hasBeenHit = true
                         noOfLifes -= 1
@@ -839,7 +891,6 @@ class GameScene: SKScene {
                         let spaceShipExplosion = SpaceShipExplosion.init(x: spaceShip.position.x, y: spaceShip.position.y, vX: spaceShip.vX, vY: spaceShip.vY, scale: 1.0, spaceShip: spaceShip)
                         spaceShipExplosion.zPosition = 2
                         spaceShipExplosions.append(spaceShipExplosion)
-                        self.addChild(spaceShipExplosion)
                         spaceShip.run(spaceShipExplosionSoundAction)
                         spaceShip.hasBeenHit = true
                         noOfLifes -= 1
@@ -867,7 +918,6 @@ class GameScene: SKScene {
                 let crystalExplosion :CrystalExplosion = CrystalExplosion.init(x: crystal.position.x, y: crystal.position.y, vX: crystal.vX, vY: crystal.vY, scale: 0.5)
                 crystalExplosion.zPosition = 2
                 crystalExplosions.append(crystalExplosion)
-                self.addChild(crystalExplosion)
                 crystalExplosion.run(powerUpSoundAction)
             }
         }
@@ -907,6 +957,7 @@ class Star: SKShapeNode {
         self.vX                       = 0
         self.vY                       = CGFloat.random(in: Star.MIN_SPEED_Y ... (Star.MIN_SPEED_Y + 1.5)) * vYVariation
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
     }
         
     
@@ -1667,6 +1718,7 @@ class AsteroidExplosion: SKSpriteNode {
         self.vX                       = vX
         self.vY                       = vY
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
         self.setScale(CGFloat(scale))
     }
     required init?(coder aDecoder: NSCoder) {
@@ -1714,6 +1766,7 @@ class RocketExplosion: SKSpriteNode {
         self.vX                       = vX
         self.vY                       = vY
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
         self.setScale(CGFloat(scale))
     }
     required init?(coder aDecoder: NSCoder) {
@@ -1761,6 +1814,7 @@ class CrystalExplosion: SKSpriteNode {
         self.vX                       = vX
         self.vY                       = vY
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
         self.setScale(CGFloat(scale))
     }
     required init?(coder aDecoder: NSCoder) {
@@ -1809,6 +1863,7 @@ class SpaceShipExplosion: SKSpriteNode {
         self.vX                       = vX
         self.vY                       = vY
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
         self.spaceShip                = spaceShip
     }
     required init?(coder aDecoder: NSCoder) {
@@ -1857,6 +1912,7 @@ class EnemyBossExplosion: SKSpriteNode {
         self.vX                       = vX
         self.vY                       = vY
         self.isUserInteractionEnabled = false
+        self.blendMode                = .screen
         self.setScale(CGFloat(scale))
     }
     required init?(coder aDecoder: NSCoder) {

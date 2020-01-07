@@ -36,11 +36,8 @@ class GameViewController: UIViewController {
             if let startScene = SKScene(fileNamed: "StartScene") {
                 startScene.scaleMode = .aspectFill //.resizeFill
                 view.presentScene(startScene)
+                view.ignoresSiblingOrder = true
             }
-            
-            //view.ignoresSiblingOrder = true
-            //view.showsFPS            = true
-            //view.showsNodeCount      = true
         }
     }
 
@@ -66,8 +63,8 @@ class GameViewController: UIViewController {
             if let startScene = SKScene(fileNamed: "StartScene") {
                 startScene.scaleMode = .aspectFill //.resizeFill
                 view.presentScene(startScene)
+                view.ignoresSiblingOrder = true
             }
-            view.ignoresSiblingOrder = true
         }
     }
     
@@ -83,10 +80,9 @@ class GameViewController: UIViewController {
                         gameOverScene.userData = ["score" : score]                        
                     }
                 }
-                
                 view.presentScene(gameOverScene)
+                view.ignoresSiblingOrder = true
             }
-            view.ignoresSiblingOrder = true
         }
     }
     
@@ -95,8 +91,12 @@ class GameViewController: UIViewController {
             if let gameScene = SKScene(fileNamed: "GameScene") {
                 gameScene.scaleMode = .aspectFill //.resizeFill
                 view.presentScene(gameScene)
+                view.ignoresSiblingOrder = true
+                //view.showsDrawCount      = true
+                //view.showsQuadCount      = true
+                //view.showsFPS            = true
+                //view.showsNodeCount      = true
             }
-            view.ignoresSiblingOrder = true
         }
     }
 }
