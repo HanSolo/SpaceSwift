@@ -475,6 +475,10 @@ class GameScene: SKScene {
         removeChildren(in: lifes)
         removeChildren(in: shields)
         
+        if (spaceShip.hasBeenHit) {
+            spaceShip.removeFromParent()
+        }
+        
         
         // Remove obsolete objects
         torpedos            = torpedos.filter { !$0.toBeRemoved }
@@ -492,6 +496,9 @@ class GameScene: SKScene {
         enemyBosses         = enemyBosses.filter { !$0.toBeRemoved }
         crystals            = crystals.filter { !$0.toBeRemoved }
         
+        if (spaceShipExplosions.isEmpty && !self.children.contains(spaceShip)) {
+            self.addChild(spaceShip)
+        }
         
         // Add enemy boss
         for i in 0 ..< enemyBosses.count {
@@ -648,14 +655,12 @@ class GameScene: SKScene {
                         score += asteroid.value!
                         asteroid.respawn()
                         torpedo.toBeRemoved = true
-                        torpedo.run(SKAction.removeFromParent())
                         asteroidExplosion.run(asteroidExplosionSoundAction)
                     } else {
                         let hit = Hit.init(x: torpedo.position.x, y: torpedo.position.y + 40, vX: asteroid.vX, vY: asteroid.vY)
                         hit.zPosition = 2
                         hits.append(hit)
                         torpedo.toBeRemoved = true
-                        torpedo.run(SKAction.removeFromParent())
                         torpedo.run(torpedoHitSoundAction)
                     }
                 }
@@ -672,7 +677,6 @@ class GameScene: SKScene {
                     score += asteroid.value!
                     asteroid.respawn()
                     rocket.toBeRemoved = true
-                    rocket.run(SKAction.removeFromParent())
                     rocketExplosion.run(rocketExplosionSoundAction)
                 }
             }
@@ -1883,7 +1887,7 @@ class SpaceShipExplosion: SKSpriteNode {
                 }
                 if countX == 0 && countY == 0 {
                     toBeRemoved = true
-                    spaceShip?.respawn()
+                    spaceShip?.respawn()                    
                 }
             }
             position.x += vX
