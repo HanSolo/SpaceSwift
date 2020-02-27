@@ -915,7 +915,7 @@ class GameScene: SKScene {
             let hit :Bool = isHitCircleCircle(c1X: crystal.position.x, c1Y: crystal.position.y, c1R: Crystal.RADIUS,
                                               c2X: spaceShip.position.x, c2Y: spaceShip.position.y, c2R: spaceShip.radius)
             if hit {
-                if noOfShields <= GameScene.SHIELDS {
+                if noOfShields < GameScene.SHIELDS {
                     noOfShields += 1
                 }
                 crystal.toBeRemoved = true
